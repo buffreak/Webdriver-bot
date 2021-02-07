@@ -1,0 +1,9 @@
+{
+  "webdriver": {
+    "host": "http://localhost:4444/wd/hub",
+    "chrome_path": "C:\\Program Files\\chrome-win\\chrome.exe"
+  },
+  "gmail": {
+    "ip_mode": true
+  }
+}
