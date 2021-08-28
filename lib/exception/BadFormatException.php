@@ -8,7 +8,8 @@
  * @version 1.0
  * @author Buffreak
  */
-namespace Api\Exception;
+namespace Lib\Exception;
 class BadFormatException extends \Exception
 {
+    
 }
