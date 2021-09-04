@@ -9,12 +9,11 @@
  * @author Buffreak
  */
 namespace Lib\Api;
-class ClientConfig
+trait ClientConfig
 {
     protected $config;
-    const INC_PATH = __DIR__.'/../../inc';
 
-    public function __construct($filename = "clientConfig.json", ?bool $toArray = null){
+    public function setConfigFile($filename = "clientConfig.json", ?bool $toArray = false){
         date_default_timezone_set("Asia/Jakarta");
         $this->config = json_decode(file_get_contents(__DIR__.'/../../'.$filename), $toArray);
     }

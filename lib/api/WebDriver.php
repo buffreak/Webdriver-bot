@@ -18,14 +18,15 @@ use Facebook\WebDriver\Chrome\ChromeOptions;
 use Facebook\WebDriver\WebDriverKeys;
 use Facebook\WebDriver\WebDriverKeyboard;
 
-class WebDriver extends ClientConfig
+class WebDriver implements Definition
 {
+    use ClientConfig;
     protected $incognitoMode, $chromeOptions, $capabilities, $headlessMode, $driver;
 
     public function __construct($incognitoMode = false, $headlessMode = false){
         $this->incognitoMode = ($incognitoMode) ? '--incognito' : '';
         $this->headlessMode = ($headlessMode) ? '--headless' : '';
-        parent::__construct();
+        $this->setConfigFile();
     }
 
     public function loadChrome(){

@@ -28,7 +28,7 @@ class Gmail extends WebDriver
     const DEFAULT_SLEEP = 2;
 
     const URL = [
-        "signup_form" => "https://gmail.com"
+        "signup_form" => "https://accounts.google.com/SignUp?service=mail&continue=https://mail.google.com/mail/?pc=topnav-about-n-en"
     ];
 
     public function __construct($incognitoMode = false, $headlessMode = false){
@@ -47,13 +47,13 @@ class Gmail extends WebDriver
         $this->loadChrome(); // $this->driver loaded from this method
         $this->initFakeData();
         $this->driver->get(self::URL['signup_form']);
-        $this->driver->wait()->until(WebDriverExpectedCondition::titleIs('Gmail'));
-
-        $this->driver->findElement(WebDriverBy::cssSelector('span.NlWrkb.snByac'))
-                ->click();
-        sleep(self::DEFAULT_SLEEP);
-        $this->driver->getKeyboard()->pressKey(WebDriverKeys::ENTER);
         $this->driver->wait()->until(WebDriverExpectedCondition::titleIs('Buat Akun Google'));
+
+        // $this->driver->findElement(WebDriverBy::cssSelector('span.VfPpkd-vQzf8d'))
+        //         ->click();
+        // sleep(self::DEFAULT_SLEEP);
+        // $this->driver->getKeyboard()->pressKey(WebDriverKeys::ENTER);
+        // $this->driver->wait()->until(WebDriverExpectedCondition::titleIs('Buat Akun Google'));
 
         $this->delayInput(function(){
             return $this->driver->findElement(WebDriverBy::cssSelector('input#firstName.whsOnd.zHQkBf'));
@@ -78,7 +78,7 @@ class Gmail extends WebDriver
         // $this->driver->findElement(WebDriverBy::cssSelector('input.VfPpkd-muHVFf-bMcfAe'))
         //     ->click(); // Show Password
 
-        $this->driver->findElement(WebDriverBy::cssSelector('div.VfPpkd-RLmnJb'))
+        $this->driver->findElement(WebDriverBy::cssSelector('span.VfPpkd-vQzf8d'))
              ->click(); // First Next
         sleep(4);
 
@@ -175,7 +175,7 @@ class Gmail extends WebDriver
         $this->driver->executeScript('window.scrollTo(0,document.body.scrollHeight);');
         sleep(2);
         $this->driver->findElements(WebDriverBy::cssSelector('.RveJvd.snByac'))[0]->click();
-        fwrite(fopen(ClientConfig::INC_PATH."/gmail.txt", 'a'), $this->email."@gmail.com|".$this->password."|".$this->phoneNumber."|".date("Y-m-d H:i:s").PHP_EOL);
+        fwrite(fopen(WebDriver::INC_PATH."/gmail.txt", 'a'), $this->email."@gmail.com|".$this->password."|".$this->phoneNumber."|".date("Y-m-d H:i:s").PHP_EOL);
         $this->driver->wait()->until(WebDriverExpectedCondition::titleContains('Kotak Masuk'));
     }
 }
