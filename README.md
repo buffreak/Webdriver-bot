@@ -17,6 +17,7 @@ git clone https://github.com/buffreak/Webdriver-bot.git
 
 * Buka __clientConfig.json__ di root direktori lalu setting path chrome / chromium yang terinstall di OS kalian.
 * Buka CMD / Powershell lalu masukkan perintah.
+* Setting config jika ingin menggunakan api dari [SMS-ACTIVE.RU](https://sms-active.ru) di clientConfig.json
 ```
 java -jar selenium.jar
 ```
@@ -25,7 +26,8 @@ java -jar selenium.jar
 php run.php
 ```
 ## Bot yang tersedia
-1. Gmail Bot [SELENIUM]
+1. Gmail Auto Regist [SELENIUM]
+2. Twitter Auto Regist [SELENIUM]
 
 ## Pemberitahuan
 Pastikan sudah menyidiakan nomor HP untuk OTP jika menggunakan Gmail Bot, dan saya tidak bertanggung jawab jika akun Google dinonaktifkan karena menggunakan bot ini.

@@ -24,7 +24,7 @@ use Facebook\WebDriver\WebDriverKeys;
 use Facebook\WebDriver\WebDriverKeyboard;
 class Gmail extends WebDriver
 {
-    protected $phoneNumber, $otp, $email, $password, $name, $maidenName;
+    protected $otp, $email, $password, $name, $maidenName;
     const DEFAULT_SLEEP = 2;
 
     const URL = [
@@ -43,7 +43,7 @@ class Gmail extends WebDriver
         $this->maidenName = $fakeinfo['maiden_name'];
     }
 
-    public function registerGmail(){
+    public function init(){
         $this->loadChrome(); // $this->driver loaded from this method
         $this->initFakeData();
         $this->driver->get(self::URL['signup_form']);
@@ -56,39 +56,39 @@ class Gmail extends WebDriver
         // $this->driver->wait()->until(WebDriverExpectedCondition::titleIs('Buat Akun Google'));
 
         $this->delayInput(function(){
-            return $this->driver->findElement(WebDriverBy::cssSelector('input#firstName.whsOnd.zHQkBf'));
+            return $this->driver->findElements(WebDriverBy::tagName('input'))[0];
         }, preg_replace('/[,.]/', '', $this->name));
 
         $this->delayInput(function(){
-            return $this->driver->findElement(WebDriverBy::cssSelector('input#lastName.whsOnd.zHQkBf'));
+            return $this->driver->findElements(WebDriverBy::tagName('input'))[1];
         }, preg_replace('/[,.]/','', $this->maidenName));
 
         $this->delayInput(function(){
-            return $this->driver->findElement(WebDriverBy::cssSelector('input#username.whsOnd.zHQkBf'));
+            return $this->driver->findElements(WebDriverBy::tagName('input'))[2];
         }, $this->email);
 
         $this->delayInput(function(){
-            return $this->driver->findElement(WebDriverBy::name('Passwd'));
+            return $this->driver->findElements(WebDriverBy::tagName('input'))[3];
         }, preg_replace('/\|/','', $this->password));
 
         $this->delayInput(function(){
-            return $this->driver->findElement(WebDriverBy::name('ConfirmPasswd'));
+            return $this->driver->findElements(WebDriverBy::tagName('input'))[4];
         }, preg_replace('/\|/','', $this->password));
 
         // $this->driver->findElement(WebDriverBy::cssSelector('input.VfPpkd-muHVFf-bMcfAe'))
         //     ->click(); // Show Password
 
-        $this->driver->findElement(WebDriverBy::cssSelector('span.VfPpkd-vQzf8d'))
+        $this->driver->findElement(WebDriverBy::tagName('button'))
              ->click(); // First Next
         sleep(4);
 
-        $checkIfOTP = $this->driver->findElements(WebDriverBy::cssSelector('h1#headingText.ahT6S span'))[0]->getAttribute("innerHTML");
+        $checkIfOTP = $this->driver->findElements(WebDriverBy::tagName('h1'))[0]->getAttribute("innerHTML");
         if(stripos($checkIfOTP, "Verifikasi no. telp.") !== false){
             if($this->OTPVerification()){
                 $this->setBio();
             }
         }
-        if($this->config->gmail->ip_mode){
+        if($this->config->ip_mode){
             echo "Sudah Menggunakan mode Pesawat? (Mengganti IP) : ";
             Request::input();
         }
@@ -97,48 +97,43 @@ class Gmail extends WebDriver
     }
     protected function OTPVerification(){
         inputPhoneNumber: {
-            echo "Masukkan nomor HP : ";
-            $this->phoneNumber = Request::input();
+
+            $this->phoneNumberType("Masukkan Nomor HP : ");
 
             $this->delayInput(function(){
-                return $this->driver->findElement(WebDriverBy::cssSelector('input#phoneNumberId.whsOnd.zHQkBf'));
+                return $this->driver->findElement(WebDriverBy::tagName('input'));
             }, $this->phoneNumber);
 
-            $this->driver->findElement(WebDriverBy::cssSelector('div.VfPpkd-RLmnJb'))
+            $this->driver->findElement(WebDriverBy::tagName('button'))
                  ->click();
             sleep(4);
-            $getErrorMessage = $this->driver->findElements(WebDriverBy::cssSelector('div.o6cuMc'));
+            $getErrorMessage = $this->driver->findElements(WebDriverBy::xpath("//div[@aria-live='assertive']"));
             if(count($getErrorMessage) > 0){
                 $getErrorMessage = $getErrorMessage[0]->getAttribute("innerHTML");
-                if(stripos($getErrorMessage, 'Nomor telepon ini tidak dapat digunakan untuk verifikasi.') !== false || stripos($getErrorMessage, 'Nomor ponsel ini sudah terlalu sering digunakan.') !== false){
+                if(stripos($getErrorMessage, 'Nomor telepon ini tidak dapat digunakan untuk verifikasi.') !== false || stripos($getErrorMessage, 'Nomor ponsel ini sudah terlalu sering digunakan.') !== false || stripos($getErrorMessage, "Format nomor telepon ini tak dikenal. Coba cek lagi kode negara dan nomornya") !== false){
                     echo "Nomor => ".$this->phoneNumber." Sudah Tidak bisa digunakan atau sudah terlalu sering digunakan untuk verifikasi\n";
-                    $this->driver->findElement(WebDriverBy::cssSelector('input#phoneNumberId.whsOnd.zHQkBf'))->clear();
+                    $this->driver->findElement(WebDriverBy::tagName('input'))->clear();
                     goto inputPhoneNumber;
                 }
             }
         }
-        $getMessage = $this->driver->findElement(WebDriverBy::cssSelector('div.PrDSKc'))->getAttribute("innerHTML");
-        if(stripos($getMessage, 'Demi keamanan, Google ingin memastikan ini memang Anda. Google akan mengirim SMS berisi kode verifikasi 6 digit.') !== false){
-            while(1){
-                echo "Masukkan OTP yang masuk ke nomor {$this->phoneNumber} : ";
-                $this->otp = Request::input();
-
+        while(1){
+            $this->otpType("Masukkan OTP yang diterima ke ".$this->phoneNumber." : ");
+            if($this->OTP){
                 $this->delayInput(function(){
-                    return $this->driver->findElement(WebDriverBy::cssSelector('input#code.whsOnd.zHQkBf'));
-                }, $this->otp);
-
+                    return $this->driver->findElement(WebDriverBy::tagName('input'));
+                }, $this->OTP);
+    
                 sleep(1);
-                $this->driver->findElements(WebDriverBy::cssSelector('div.VfPpkd-RLmnJb'))[1]->click();
+                $this->driver->findElements(WebDriverBy::tagName('button'))[1]->click();
                 sleep(4);
-
-                $getErrorMessage = $this->driver->findElements(WebDriverBy::cssSelector('div.o6cuMc'));
+    
+                $getErrorMessage = $this->driver->findElements(WebDriverBy::xpath("//div[@aria-live='assertive']"));
                 if(count($getErrorMessage) > 0){
                     $getErrorMessage = $getErrorMessage[0]->getAttribute("innerHTML");
                     if(stripos($getErrorMessage, 'Kode salah. Coba lagi.') === false) break;
-                }else{
-                    break;
-                }
-            }
+                }else break;
+            }else return false;
         }
         return true;
     }
@@ -147,10 +142,10 @@ class Gmail extends WebDriver
         sleep(self::DEFAULT_SLEEP);
 
         $this->delayInput(function(){
-            return $this->driver->findElement(WebDriverBy::cssSelector('input#day.whsOnd.zHQkBf'));
+            return $this->driver->findElements(WebDriverBy::tagName('input'))[2];
         }, rand(1, 29));
 
-        $this->driver->findElement(WebDriverBy::cssSelector('select#month.UDCCJb'))->click();
+        $this->driver->findElements(WebDriverBy::tagName('select'))[0]->click();
         for($i = 0; $i < rand(1, 12); $i++){
             $this->driver->getKeyboard()->pressKey(WebDriverKeys::ARROW_DOWN);
             usleep(110000);
@@ -159,22 +154,22 @@ class Gmail extends WebDriver
         sleep(1);
 
         $this->delayInput(function(){
-            return $this->driver->findElement(WebDriverBy::cssSelector('input#year.whsOnd.zHQkBf'));
+            return $this->driver->findElements(WebDriverBy::tagName('input'))[3];
         }, rand(1990, 2001));
 
-        $this->driver->findElement(WebDriverBy::cssSelector('select#gender.UDCCJb'))->click();
+        $this->driver->findElements(WebDriverBy::tagName('select'))[1]->click();
         for($i = 0; $i < rand(1, 2); $i++){
             $this->driver->getKeyboard()->pressKey(WebDriverKeys::ARROW_DOWN);
             usleep(110000);
         }
         $this->driver->getKeyboard()->pressKey(WebDriverKeys::ENTER);
-        $this->driver->findElements(WebDriverBy::cssSelector('div.VfPpkd-RLmnJb'))[0]->click();
+        $this->driver->findElements(WebDriverBy::tagName('button'))[0]->click();
         sleep(3);
-        $this->driver->findElements(WebDriverBy::cssSelector('div.VfPpkd-RLmnJb'))[1]->click();
+        $this->driver->findElements(WebDriverBy::tagName('button'))[3]->click();
         sleep(3);
         $this->driver->executeScript('window.scrollTo(0,document.body.scrollHeight);');
         sleep(2);
-        $this->driver->findElements(WebDriverBy::cssSelector('.RveJvd.snByac'))[0]->click();
+        $this->driver->findElements(WebDriverBy::tagName('button'))[3]->click();
         fwrite(fopen(WebDriver::INC_PATH."/gmail.txt", 'a'), $this->email."@gmail.com|".$this->password."|".$this->phoneNumber."|".date("Y-m-d H:i:s").PHP_EOL);
         $this->driver->wait()->until(WebDriverExpectedCondition::titleContains('Kotak Masuk'));
     }

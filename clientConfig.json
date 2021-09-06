@@ -3,7 +3,16 @@
     "host": "http://localhost:4444/wd/hub",
     "chrome_path": "C:\\Program Files\\chrome-win\\chrome.exe"
   },
-  "gmail": {
-    "ip_mode": true
-  }
+  "socks":{
+    "used": false,
+    "file_location": ""
+  },
+  "sms_active_ru":{
+    "used": true,
+    "apikey": "",
+    "service": "go",
+    "country": 6
+  },
+  "ip_mode": false,
+  "noted": "for ip_mode if set to true, it will ask you to change your ip manually in input (if you dont have socks recommended to use this)"
 }

@@ -17,6 +17,10 @@ use Facebook\WebDriver\Cookie;
 use Facebook\WebDriver\Chrome\ChromeOptions;
 use Facebook\WebDriver\WebDriverKeys;
 use Facebook\WebDriver\WebDriverKeyboard;
+use Lib\Api\Request;
+use Lib\Api\FakeName;
+use Lib\Api\ClientConfig;
+use Lib\Api\DeathByCaptcha_Client;
 
 class WebDriver implements Definition
 {
@@ -34,6 +38,9 @@ class WebDriver implements Definition
         $this->chromeOptions = new ChromeOptions();
         $this->incognitoMode ? $this->chromeOptions->addArguments([$this->incognitoMode]) : '';
         $this->headlessMode ? $this->chromeOptions->addArguments([$this->headlessMode]) : '';
+        $this->chromeOptions->addArguments(['--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101 Firefox/91.0']);
+        $this->chromeOptions->addArguments(['--start-maximized']);
+        $this->chromeOptions->addArguments(['window-size=1400,900']);
         $this->chromeOptions->setBinary($this->config->webdriver->chrome_path);
         $this->chromeOptions->setExperimentalOption("excludeSwitches", ["enable-automation"]);
         $this->capabilities = DesiredCapabilities::chrome();
