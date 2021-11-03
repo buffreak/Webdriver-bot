@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__.'/autoload.php';
 use Lib\Bot\Gmail;
+use Lib\Bot\GmLikes;
 use Lib\Bot\Twitter;
 
 echo '
@@ -12,6 +13,7 @@ echo "
 Masukkan Pilihan
 1. GMAIL
 2. Twitter
+3. GMLikes
 Masukkan Pilihan : ";
 $pilihan = (int) trim(fgets(STDIN));
 $bot = null;

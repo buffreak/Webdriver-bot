@@ -27,16 +27,6 @@ class Twitter extends WebDriver{
         parent::__construct($incognitoMode, $headlessMode);
     }
 
-    protected function initFakeData(){
-        $fakeinfo = FakeName::info();
-        $this->email = $fakeinfo['username'].Request::generateString(3).Request::generateString(2, 'integer');
-        $this->password = $fakeinfo['password'];
-        $this->name = $fakeinfo['name'];
-        $this->maidenName = $fakeinfo['maiden_name'];
-    }
-
-
-
     public function init(){
         $this->loadChrome(); // $this->driver loaded from this method
         $this->setBio();
@@ -60,7 +50,7 @@ class Twitter extends WebDriver{
             return $this->driver->findElement(WebDriverBy::name("name"));
         }, preg_replace('/[,.]/','', $this->name));
         // Phone_number Input
-        $this->phoneNumberType("Masukkan Phone Number : ");
+        $this->phoneNumberType("Masukkan Phone Number : ", "tw");
         $this->delayInput(function(){
             return $this->driver->findElement(WebDriverBy::name("phone_number"));
         }, preg_replace('/[,.]/','', $this->phoneNumber));

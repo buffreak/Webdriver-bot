@@ -35,14 +35,6 @@ class Gmail extends WebDriver
         parent::__construct($incognitoMode, $headlessMode);
     }
 
-    protected function initFakeData(){
-        $fakeinfo = FakeName::info();
-        $this->email = $fakeinfo['username'].Request::generateString(3).Request::generateString(2, 'integer');
-        $this->password = $fakeinfo['password'];
-        $this->name = $fakeinfo['name'];
-        $this->maidenName = $fakeinfo['maiden_name'];
-    }
-
     public function init(){
         $this->loadChrome(); // $this->driver loaded from this method
         $this->initFakeData();
@@ -98,7 +90,7 @@ class Gmail extends WebDriver
     protected function OTPVerification(){
         inputPhoneNumber: {
 
-            $this->phoneNumberType("Masukkan Nomor HP : ");
+            $this->phoneNumberType("Masukkan Nomor HP : ", "go");
 
             $this->delayInput(function(){
                 return $this->driver->findElement(WebDriverBy::tagName('input'));

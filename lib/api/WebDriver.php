@@ -57,10 +57,10 @@ class WebDriver implements Definition
         return $this;
     }
 
-    protected function delayInput(\Closure $selector, string $str){
+    protected function delayInput(\Closure $selector, string $str, bool $randomSleep = true){
         for($i = 0; $i < strlen($str); $i++){
             $selector()->sendKeys($str[$i]);
-            usleep(rand(110000, 117876));
+            usleep($randomSleep ? rand(110000, 117876) : 0);
         }
     }
 

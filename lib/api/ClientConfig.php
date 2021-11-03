@@ -10,6 +10,7 @@
  */
 namespace Lib\Api;
 use Lib\Api\SMSActivate;
+use Lib\Api\FakeName;
 trait ClientConfig
 {
     protected $config, $sms, $numberResponse, $phoneNumber, $OTP;
@@ -19,13 +20,21 @@ trait ClientConfig
         $this->config = json_decode(file_get_contents(__DIR__.'/../../'.$filename), $toArray);
     }
 
-    protected function smsConfigRU(){
+    protected function smsConfigRU($serviceCode){
         $this->sms = new SMSActivate($this->config->sms_active_ru->apikey);
         echo "Saldo yang tersisa ".$this->sms->getBalance()." RUB (Russian Currency)\n";
-        $this->numberResponse = $this->sms->getNumber($this->config->sms_active_ru->service, $this->config->sms_active_ru->country, 0);
+        $this->numberResponse = $this->sms->getNumber($serviceCode, $this->config->sms_active_ru->country, 0);
         $this->phoneNumber = preg_replace('/.{2}(.+)$/', '0$1', $this->numberResponse["number"]);
         echo "Nomor Sekarang => ".$this->phoneNumber."\n";
         return $this;
+    }
+
+    protected function initFakeData(){
+        $fakeinfo = FakeName::info();
+        $this->email = $fakeinfo['username'].Request::generateString(3).Request::generateString(2, 'integer');
+        $this->password = $fakeinfo['password'];
+        $this->name = $fakeinfo['name'];
+        $this->maidenName = $fakeinfo['maiden_name'];
     }
 
     protected function getMessageSmsRU(){
@@ -55,8 +64,8 @@ trait ClientConfig
         return trim(fgets(STDIN));
     }
 
-    public function phoneNumberType(?string $message = null){
-       $this->config->sms_active_ru->used ? $this->smsConfigRU() : $this->phoneNumber = $this->prompInput($message);
+    public function phoneNumberType(?string $message = null, $serviceCode = null){
+       $this->config->sms_active_ru->used ? $this->smsConfigRU($serviceCode) : $this->phoneNumber = $this->prompInput($message);
     }
 
     public function otpType(?string $message = null){

@@ -9,8 +9,7 @@
   },
   "sms_active_ru":{
     "used": true,
-    "apikey": "",
-    "service": "go",
+    "apikey": "e789181bdcd079d1bAc9d483ee7e106d",
     "country": 6
   },
   "ip_mode": false,

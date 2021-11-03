@@ -2,3 +2,4 @@ vendor
 WebDriver.phpproj
 WebDriver.phpproj.user
 .vs
+chromedriver_backup.exe
